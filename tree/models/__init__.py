@@ -1,6 +1,6 @@
 """Tree API models."""
 
-from .links import Link, NavigationLinks, Operation, OperationsDict
+from .links import Link
 from .node import CollapseRequest, ExpandRequest, Node, NodeCreate, NodeUpdate
 from .response import Breadcrumb, Context, ErrorResponse, NodeListResponse, NodeResponse
 
@@ -13,9 +13,6 @@ __all__ = [
     "CollapseRequest",
     # Link models
     "Link",
-    "NavigationLinks",
-    "Operation",
-    "OperationsDict",
     # Response models
     "Breadcrumb",
     "Context",

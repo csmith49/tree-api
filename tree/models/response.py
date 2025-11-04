@@ -4,7 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
-from .links import NavigationLinks, OperationsDict
+from .links import Link
 
 
 class Breadcrumb(BaseModel):
@@ -40,22 +40,23 @@ class NodeResponse(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="Custom metadata")
 
     # Zipper context
-    context: Context = Field(..., serialization_alias="_context", description="Position and context information")
+    context: Context = Field(
+        ..., serialization_alias="_context", description="Position and context information"
+    )
 
-    # HATEOAS links
-    links: NavigationLinks = Field(
+    # HATEOAS links - flexible dict mapping link relations to Link objects
+    links: dict[str, Link] = Field(
         ..., serialization_alias="_links", description="Available navigation links"
     )
 
-    # Available operations
-    operations: OperationsDict = Field(
-        ..., serialization_alias="_operations", description="Available operations and their status"
+    # Available operations - flexible dict, FastAPI will handle operation descriptions
+    operations: dict[str, Any] = Field(
+        default_factory=dict,
+        serialization_alias="_operations",
+        description="Available operations and their status",
     )
 
-    class Config:
-        """Pydantic configuration."""
-
-        populate_by_name = True
+    model_config = {"populate_by_name": True}
 
 
 class NodeListResponse(BaseModel):
@@ -74,7 +75,4 @@ class ErrorResponse(BaseModel):
         default_factory=dict, serialization_alias="_links", description="Links to valid states"
     )
 
-    class Config:
-        """Pydantic configuration."""
-
-        populate_by_name = True
+    model_config = {"populate_by_name": True}
