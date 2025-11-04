@@ -140,8 +140,9 @@ class TestNodeIdTypeAlias:
 
     def test_node_id_consistency_across_models(self) -> None:
         """Test that NodeId is consistent across different model types."""
-        from tree.models import Breadcrumb, Link, Node
         from datetime import datetime
+
+        from tree.models import Breadcrumb, Link, Node
 
         # All these should accept the same ID format
         test_id = "consistent-id-123"

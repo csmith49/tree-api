@@ -16,9 +16,7 @@ class Context(BaseModel):
     """Context information about a node's position in the tree (zipper context)."""
 
     depth: int = Field(..., ge=0, description="Distance from root (root has depth 0)")
-    sibling_position: int = Field(
-        ..., ge=0, description="Position among siblings (0-indexed)"
-    )
+    sibling_position: int = Field(..., ge=0, description="Position among siblings (0-indexed)")
     total_siblings: int = Field(..., ge=1, description="Total number of siblings including self")
     has_children: bool = Field(..., description="Whether this node has children")
     children_count: int = Field(..., ge=0, description="Number of direct children")

@@ -33,7 +33,7 @@ A **zipper** represents: `Zipper = (Focus, Context)`
   "id": "node-42",
   "description": "Implement authentication",
   "isLeaf": false,
-  
+
   "_context": {
     "depth": 2,
     "siblingPosition": 1,
@@ -44,60 +44,60 @@ A **zipper** represents: `Zipper = (Focus, Context)`
       {"id": "node-10", "description": "Backend services"}
     ]
   },
-  
+
   "_links": {
     "self": {
       "href": "/nodes/node-42"
     },
-    
+
     "up": {
       "href": "/nodes/node-10",
       "title": "Parent: Backend services"
     },
-    
+
     "down": {
       "href": "/nodes/node-42/children/first",
       "title": "First child: Set up JWT"
     },
-    
+
     "left": {
       "href": "/nodes/node-41",
       "title": "Previous sibling: Database schema"
     },
-    
+
     "right": {
       "href": "/nodes/node-43",
       "title": "Next sibling: API endpoints"
     },
-    
+
     "root": {
       "href": "/nodes/root",
       "title": "Root: Build web app"
     },
-    
+
     "next-dfs": {
       "href": "/nodes/node-42-child-1",
       "title": "Next in depth-first: Set up JWT"
     },
-    
+
     "next-bfs": {
       "href": "/nodes/node-43",
       "title": "Next in breadth-first: API endpoints"
     },
-    
+
     "children": {
       "href": "/nodes/node-42/children",
       "title": "All children"
     }
   },
-  
+
   "_operations": {
     "modify": {
       "href": "/nodes/node-42",
       "method": "PATCH",
       "accepts": "application/json"
     },
-    
+
     "expand": {
       "href": "/nodes/node-42/expand",
       "method": "POST",
@@ -105,14 +105,14 @@ A **zipper** represents: `Zipper = (Focus, Context)`
       "available": false,
       "reason": "Node already has children"
     },
-    
+
     "collapse": {
       "href": "/nodes/node-42/collapse",
       "method": "POST",
       "accepts": "application/json",
       "available": true
     },
-    
+
     "delete": {
       "href": "/nodes/node-42",
       "method": "DELETE",
@@ -129,7 +129,7 @@ In a traditional zipper:
 data Loc a = Loc {
   focus :: Tree a,
   lefts :: [Tree a],      -- Elder siblings
-  rights :: [Tree a],     -- Younger siblings  
+  rights :: [Tree a],     -- Younger siblings
   parents :: Path a       -- Context up the tree
 }
 ```
@@ -138,7 +138,7 @@ In HATEOAS zipper:
 ```json
 {
   "focus": { /* current node data */ },
-  
+
   "_links": {
     "left": "...",    // First of lefts
     "right": "...",   // First of rights
@@ -157,7 +157,7 @@ The links **implicitly represent the zipper's context** without exposing the ful
 **Traditional zipper code:**
 ```haskell
 dfsNext :: Loc a -> Maybe (Loc a)
-dfsNext loc = 
+dfsNext loc =
   down loc <|> right loc <|> up loc >>= right
 ```
 
@@ -165,10 +165,10 @@ dfsNext loc =
 ```python
 def navigate_dfs(start_url):
     current = requests.get(start_url).json()
-    
+
     while current:
         process(current)
-        
+
         # Server computed next DFS step
         if 'next-dfs' in current['_links']:
             current = requests.get(
@@ -188,10 +188,10 @@ def navigate_dfs(start_url):
 ```python
 def navigate_bfs(start_url):
     current = requests.get(start_url).json()
-    
+
     while current:
         process(current)
-        
+
         if 'next-bfs' in current['_links']:
             current = requests.get(
                 current['_links']['next-bfs']['href']
@@ -214,12 +214,12 @@ ghci> z |> down |> right |> up |> left
 ```python
 def interactive_navigate(start_url):
     current = requests.get(start_url).json()
-    
+
     while True:
         display(current)
         available = current['_links'].keys()
         print(f"Available moves: {available}")
-        
+
         move = input("Move: ")
         if move in current['_links']:
             current = requests.get(
@@ -253,13 +253,13 @@ Content-Type: application/json
   "id": "node-42",
   "description": "Implement authentication",
   "isLeaf": false,
-  
+
   "_context": {
     "depth": 2,
     "hasChildren": true,
     "childrenCount": 3
   },
-  
+
   "_links": {
     "self": {"href": "/nodes/node-42"},
     "down": {
@@ -268,7 +268,7 @@ Content-Type: application/json
     },
     "children": {"href": "/nodes/node-42/children"}
   },
-  
+
   "_operations": {
     "expand": {
       "href": "/nodes/node-42/expand",
@@ -309,19 +309,19 @@ Content-Type: application/json
   "id": "node-42",
   "description": "Implement authentication (3 steps complete)",
   "isLeaf": true,
-  
+
   "_context": {
     "depth": 2,
     "hasChildren": false
   },
-  
+
   "_links": {
     "self": {"href": "/nodes/node-42"},
     "up": {"href": "/nodes/node-10"},
     "left": {"href": "/nodes/node-41"},
     "right": {"href": "/nodes/node-43"}
   },
-  
+
   "_operations": {
     "expand": {
       "href": "/nodes/node-42/expand",
@@ -354,7 +354,7 @@ def compute_links(node: Node, tree: Tree) -> dict:
     links = {
         "self": {"href": f"/nodes/{node.id}"}
     }
-    
+
     # Upward navigation
     if node.parent_id:
         parent = tree.get_node(node.parent_id)
@@ -362,7 +362,7 @@ def compute_links(node: Node, tree: Tree) -> dict:
             "href": f"/nodes/{parent.id}",
             "title": f"Parent: {parent.description}"
         }
-    
+
     # Downward navigation
     children = tree.get_children(node.id)
     if children:
@@ -373,25 +373,25 @@ def compute_links(node: Node, tree: Tree) -> dict:
         links["children"] = {
             "href": f"/nodes/{node.id}/children"
         }
-    
+
     # Sibling navigation
     siblings = tree.get_siblings(node.id)
     node_idx = siblings.index(node)
-    
+
     if node_idx > 0:
         prev_sibling = siblings[node_idx - 1]
         links["left"] = {
             "href": f"/nodes/{prev_sibling.id}",
             "title": f"Previous: {prev_sibling.description}"
         }
-    
+
     if node_idx < len(siblings) - 1:
         next_sibling = siblings[node_idx + 1]
         links["right"] = {
             "href": f"/nodes/{next_sibling.id}",
             "title": f"Next: {next_sibling.description}"
         }
-    
+
     # Traversal helpers
     links["next-dfs"] = {
         "href": f"/nodes/{compute_next_dfs(node, tree).id}"
@@ -399,10 +399,10 @@ def compute_links(node: Node, tree: Tree) -> dict:
     links["next-bfs"] = {
         "href": f"/nodes/{compute_next_bfs(node, tree).id}"
     }
-    
+
     # Root access
     links["root"] = {"href": "/nodes/root"}
-    
+
     return links
 
 def compute_operations(node: Node) -> dict:
@@ -419,7 +419,7 @@ def compute_operations(node: Node) -> dict:
             "available": not node.is_root
         }
     }
-    
+
     # Zoom operations depend on state
     if node.is_leaf:
         ops["expand"] = {
@@ -441,7 +441,7 @@ def compute_operations(node: Node) -> dict:
             "method": "POST",
             "available": True
         }
-    
+
     return ops
 ```
 
@@ -450,7 +450,7 @@ def compute_operations(node: Node) -> dict:
 ```python
 def compute_context(node: Node, tree: Tree) -> dict:
     """Build zipper-style context: breadcrumbs + position."""
-    
+
     # Walk up to root
     breadcrumbs = []
     current = node.parent_id
@@ -461,11 +461,11 @@ def compute_context(node: Node, tree: Tree) -> dict:
             "description": parent.description
         })
         current = parent.parent_id
-    
+
     # Sibling position
     siblings = tree.get_siblings(node.id)
     position = siblings.index(node)
-    
+
     return {
         "depth": len(breadcrumbs),
         "siblingPosition": position,
