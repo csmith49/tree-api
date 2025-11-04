@@ -30,7 +30,7 @@ class Context(BaseModel):
 
 
 class NodeResponse(BaseModel):
-    """Full node response with data, context, links, and operations (zipper + HATEOAS)."""
+    """Full node response with data, context, and links (zipper + HATEOAS)."""
 
     # Core node data
     id: str = Field(..., description="Unique node identifier")
@@ -40,21 +40,10 @@ class NodeResponse(BaseModel):
     metadata: dict[str, Any] = Field(default_factory=dict, description="Custom metadata")
 
     # Zipper context
-    context: Context = Field(
-        ..., serialization_alias="_context", description="Position and context information"
-    )
+    context: Context = Field(..., description="Position and context information")
 
     # HATEOAS links - flexible dict mapping link relations to Link objects
-    links: dict[str, Link] = Field(
-        ..., serialization_alias="_links", description="Available navigation links"
-    )
-
-    # Available operations - flexible dict, FastAPI will handle operation descriptions
-    operations: dict[str, Any] = Field(
-        default_factory=dict,
-        serialization_alias="_operations",
-        description="Available operations and their status",
-    )
+    links: dict[str, Link] = Field(..., description="Available navigation links")
 
     model_config = {"populate_by_name": True}
 
@@ -72,7 +61,7 @@ class ErrorResponse(BaseModel):
     error: str = Field(..., description="Error type")
     message: str = Field(..., description="Human-readable error message")
     links: dict[str, Any] = Field(
-        default_factory=dict, serialization_alias="_links", description="Links to valid states"
+        default_factory=dict, description="Links to valid states"
     )
 
     model_config = {"populate_by_name": True}
